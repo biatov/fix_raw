@@ -8,6 +8,10 @@ from pathlib import Path
 import re
 
 parser = OptionParser()
+parser.add_option("-r", "--region", dest="reg",
+                  help="enter region", metavar="PATH")
+parser.add_option("-f", "--flow", dest="fl",
+                  help="enter flow", metavar="PATH")
 parser.add_option("-p", "--path", dest="zip",
                   help="zip file path", metavar="PATH")
 parser.add_option("-o", "--output", dest="json",
@@ -21,7 +25,7 @@ parser.add_option("-q", "--quiet",
 res = options.json
 
 try:
-    region, system, *spam = re.split('[\\\|/]', options.zip)
+    region, system = options.reg, options.fl
 except TypeError:
     print('Param -p is empty')
     exit()
@@ -91,10 +95,10 @@ def write_key_value(data):
                                          filter(None, fix_split)))
                     new_dict_data = dict()
                     new_dict_data['region'] = region
-                    new_dict_data['system'] = system
-                    new_dict_data['order_id'] = dict_data.get('OrderID', '')
-                    new_dict_data['order_version'] = dict_data.get('10240', '')
-                    new_dict_data['trd_date'] = dict_data.get('TradeDate', '')
+                    new_dict_data['flow'] = system
+                    # new_dict_data['order_id'] = dict_data.get('OrderID', '')
+                    # new_dict_data['order_version'] = dict_data.get('10240', '')
+                    # new_dict_data['trd_date'] = dict_data.get('TradeDate', '')
                     new_dict_data['message'] = ''.join(fix_split)
                     # new_list_data = [
                     #     {'region': new_dict_data['region']},
@@ -104,6 +108,7 @@ def write_key_value(data):
                     #     {'trd_date': new_dict_data['trd_date']},
                     #     {'message': new_dict_data['message']}
                     # ]
+                    new_dict_data.update(dict_data)
 
                     filename = '%s%s' % (each_data[1], line) if len(d) > 1 else each_data[1]
                     with open('%s.json' % filename, 'w') as json_data:
@@ -115,4 +120,5 @@ def write_key_value(data):
             except FileNotFoundError:
                 print('File Not Found (record)')
 
-write_key_value(read_file(options.zip))
+
+write_key_value(read_file('{r}/{s}/{p}'.format(r=options.reg, s=options.fl, p=options.zip)))
