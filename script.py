@@ -26,8 +26,9 @@ except TypeError:
     print('Param -p is empty')
     exit()
 except ValueError:
-    print('Not enouth params')
-    exit()
+    # print('Not enouth params')
+    # exit()
+    region = system = ''
 
 try:
     os.mkdir(options.json)
@@ -54,7 +55,7 @@ def read_file(directory):
         if suf == '.gz':
             open_func = gzip.open
         elif suf == '.bz2':
-            open_func = bz2.BZ2File
+            open_func = bz2.open
         else:
             try:
                 os.mkdir(res)
@@ -62,7 +63,7 @@ def read_file(directory):
                 pass
             open_func = open
         try:
-            file_data = open_func('{}/{}'.format(directory, each_file), 'r')
+            file_data = open_func('{}/{}'.format(directory, each_file), 'rt', encoding='utf-8', errors='ignore')
         except FileNotFoundError:
             file_data = []
             print('File Not Found')
