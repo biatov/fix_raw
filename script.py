@@ -90,9 +90,11 @@ def write_key_value(data):
                 d = each_data[0].strip().split('\n')
                 for line, message in enumerate(d, start=1):
                     fix_split = message.strip().replace('\x02', '').split('\x01')
-                    dict_data = dict(map(lambda items: (names.get(items.split('=')[0], items.split('=')[0]),
-                                                        items.split('=')[1]),
+                    dict_data = dict(map(lambda items:
+                                         (names.get(items.split('=')[0], items.split('=')[0]),
+                                          items.split('=')[1] if '=' in items else ''),
                                          filter(None, fix_split)))
+
                     new_dict_data = dict()
                     new_dict_data['region'] = region
                     new_dict_data['flow'] = system
